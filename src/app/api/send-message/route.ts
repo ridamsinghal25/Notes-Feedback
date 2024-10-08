@@ -1,43 +1,74 @@
 import dbConnect from "@/lib/dbConnect";
-import UserModel from "@/models/User";
-
-import { Message } from "@/models/User";
+import MessageModel from "@/models/Message";
+import { getServerSession, User } from "next-auth";
+import { authOptions } from "../auth/[...nextauth]/options";
+import AcceptMessageModel from "@/models/AcceptMessage";
 
 export async function POST(request: Request) {
   await dbConnect();
 
-  const { username, content } = await request.json();
+  const session = await getServerSession(authOptions);
+  const user = session?.user as User;
+
+  if (!session || !session.user) {
+    return Response.json(
+      {
+        success: false,
+        message: "Not Authenticated",
+      },
+      { status: 401 }
+    );
+  }
+
+  const userId = user?._id;
 
   try {
-    const user = await UserModel.findOne({ username });
+    const { subject, chapterNumber, feedback } = await request.json();
 
-    if (!user) {
+    if (
+      [subject, chapterNumber, feedback].some(
+        (field) => field?.trim() === "" || !field
+      )
+    ) {
       return Response.json(
         {
           success: false,
-          message: "User not found",
+          message: "All fields are required",
         },
-        { status: 404 }
+        { status: 400 }
       );
     }
 
-    // is user accepting the messages
+    const isUserAcceptingMessages = await AcceptMessageModel.findOne({
+      userId,
+    });
 
-    if (!user.isAcceptingMessages) {
+    if (!isUserAcceptingMessages?.isAcceptingMessages) {
       return Response.json(
         {
           success: false,
           message: "User is not accepting messages",
         },
-        { status: 403 }
+        { status: 400 }
       );
     }
 
-    const newMessage = { content, createdAt: new Date() };
+    const createNewMessage = await MessageModel.create({
+      subject,
+      chapterNumber,
+      feedback,
+      userId,
+    });
 
-    user.messages.push(newMessage as Message);
-
-    await user.save();
+    if (!createNewMessage) {
+      return Response.json(
+        {
+          success: false,
+          message: "Failed to send message",
+        },
+        { status: 500 }
+      );
+    }
 
     return Response.json(
       {
@@ -47,7 +78,7 @@ export async function POST(request: Request) {
       { status: 200 }
     );
   } catch (error) {
-    console.log("Error adding messages: ", error);
+    console.log("Error sending messages: ", error);
 
     return Response.json(
       {

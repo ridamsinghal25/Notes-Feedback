@@ -1,9 +1,8 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import dbConnect from "@/lib/dbConnect";
-import UserModel from "@/models/User";
 import { User } from "next-auth";
-import mongoose from "mongoose";
+import MessageModel from "@/models/Message";
 
 export async function GET(request: Request) {
   await dbConnect();
@@ -21,40 +20,35 @@ export async function GET(request: Request) {
     );
   }
 
-  const userId = new mongoose.Types.ObjectId(user._id);
-
   try {
-    const user = await UserModel.aggregate([
-      { $match: { _id: userId } },
-      { $unwind: "$messages" },
-      { $sort: { "messages.createdAt": -1 } },
-      { $group: { _id: "$_id", messages: { $push: "$messages" } } },
-    ]);
+    const { subject } = await request.json();
 
-    if (user?.length === 0) {
-      return Response.json(
-        {
-          success: true,
-          messages: [],
-        },
-        { status: 200 }
-      );
-    }
-
-    if (!user) {
+    if (!subject) {
       return Response.json(
         {
           success: false,
-          message: "User not found",
+          message: "Subject is required",
         },
-        { status: 401 }
+        { status: 400 }
+      );
+    }
+
+    const getMessages = await MessageModel.find({ subject });
+
+    if (getMessages?.length === 0) {
+      return Response.json(
+        {
+          success: false,
+          message: "No messages found",
+        },
+        { status: 200 }
       );
     }
 
     return Response.json(
       {
         success: true,
-        messages: user[0].messages,
+        messages: getMessages,
       },
       { status: 200 }
     );
@@ -63,7 +57,7 @@ export async function GET(request: Request) {
     return Response.json(
       {
         success: false,
-        message: "User not found",
+        message: "Error while getting message",
       },
       { status: 500 }
     );
