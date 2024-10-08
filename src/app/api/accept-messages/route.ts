@@ -1,8 +1,8 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import dbConnect from "@/lib/dbConnect";
-import UserModel from "@/models/User";
 import { User } from "next-auth";
+import AcceptMessageModel from "@/models/AcceptMessage";
 
 export async function POST(request: Request) {
   await dbConnect();
@@ -24,23 +24,20 @@ export async function POST(request: Request) {
   const { acceptMessages } = await request.json();
 
   try {
-    const updatedUser = await UserModel.findByIdAndUpdate(
-      userId,
-      {
-        isAcceptingMessages: acceptMessages,
-      },
-      { new: true }
-    );
+    const acceptMessage = await AcceptMessageModel.findOne({ userId });
 
-    if (!updatedUser) {
+    if (!acceptMessage) {
       return Response.json(
         {
           success: false,
-          message: "Failed to update user status to accept messages",
+          message: "Something went wrong while accepting messages",
         },
-        { status: 401 }
+        { status: 404 }
       );
     }
+
+    acceptMessage.isAcceptingMessages = acceptMessages;
+    await acceptMessage.save();
 
     return Response.json(
       {
@@ -81,7 +78,7 @@ export async function GET(request: Request) {
   const userId = user._id;
 
   try {
-    const foundUser = await UserModel.findById(userId);
+    const foundUser = await AcceptMessageModel.findOne({ userId });
 
     if (!foundUser) {
       return Response.json(
@@ -101,7 +98,7 @@ export async function GET(request: Request) {
       { status: 200 }
     );
   } catch (error) {
-    console.log("Failed to update user status to accept messages", error);
+    console.log("Error in getting message acceptance status", error);
 
     return Response.json(
       {
