@@ -1,68 +1,93 @@
+import { AvailableUserRoles, UserRolesEnum } from "@/constants";
 import mongoose, { Schema, Document } from "mongoose";
 
-export interface Message extends Document {
-  content: string;
-  createdAt: Date;
-}
-
-const MessageSchema: Schema<Message> = new Schema({
-  content: {
-    type: String,
-    required: true,
-  },
-  createdAt: {
-    type: Date,
-    required: true,
-    default: Date.now(),
-  },
-});
-
 export interface User extends Document {
-  username: string;
   email: string;
+  rollNumber: string;
   password: string;
-  verifyCode: string;
-  verifyCodeExpiry: Date;
-  isVerified: boolean;
-  isAcceptingMessages: boolean;
-  messages: Message[];
+  fullName: string;
+  avatar: {
+    public_id: string;
+    url: string;
+  };
+  role: string;
+  course: mongoose.Schema.Types.ObjectId;
+  isEmailVerified: boolean;
+  emailVerificationToken: string;
+  emailVerificationExpiry: Date;
+  forgotPasswordToken: string;
+  forgotPasswordExpiry: Date;
+  refreshToken: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
-const UserSchema: Schema<User> = new Schema({
-  username: {
-    type: String,
-    required: [true, "Username is required"],
-    trim: true,
-    unique: true,
+const UserSchema: Schema<User> = new Schema(
+  {
+    email: {
+      type: String,
+      required: [true, "email is required"],
+      unique: true,
+      lowercase: true,
+      trim: true,
+    },
+    rollNumber: {
+      type: String,
+      required: [true, "roll number is required"],
+      unique: true,
+      trim: true,
+    },
+    password: {
+      type: String,
+      required: [true, "password is required"],
+    },
+    fullName: {
+      type: String,
+      required: [true, "fullname is required"],
+      trim: true,
+    },
+    avatar: {
+      public_id: {
+        type: String,
+        default: "",
+      },
+      url: {
+        type: String,
+        default: "",
+      },
+    },
+    role: {
+      type: String,
+      enum: AvailableUserRoles,
+      default: UserRolesEnum.USER,
+      required: true,
+    },
+    course: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Course",
+    },
+    isEmailVerified: {
+      type: Boolean,
+      default: false,
+    },
+    emailVerificationToken: {
+      type: String,
+    },
+    emailVerificationExpiry: {
+      type: Date,
+    },
+    forgotPasswordToken: {
+      type: String,
+    },
+    forgotPasswordExpiry: {
+      type: Date,
+    },
+    refreshToken: {
+      type: String,
+    },
   },
-  email: {
-    type: String,
-    required: [true, "Email is required"],
-    trim: true,
-    unique: true,
-  },
-  password: {
-    type: String,
-    required: [true, "Password is required"],
-  },
-  verifyCode: {
-    type: String,
-    required: [true, "verify code is required"],
-  },
-  verifyCodeExpiry: {
-    type: Date,
-    required: [true, "verify code expiry is required"],
-  },
-  isVerified: {
-    type: Boolean,
-    default: false,
-  },
-  isAcceptingMessages: {
-    type: Boolean,
-    default: false,
-  },
-  messages: [MessageSchema],
-});
+  { timestamps: true }
+);
 
 const UserModel =
   (mongoose.models.User as mongoose.Model<User>) ||
