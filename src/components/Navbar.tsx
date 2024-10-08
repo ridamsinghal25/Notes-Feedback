@@ -40,7 +40,7 @@ function Navbar() {
                 Welcome, {user?.username || user?.email}
               </span>
               <Button
-                className="w-full md:w-auto bg-slate-100 text-black"
+                className="w-full md:w-auto bg-slate-100 text-black hover:text-white hover:border-white hover:border-2"
                 variant={"dark"}
                 onClick={() => signOut()}
               >
