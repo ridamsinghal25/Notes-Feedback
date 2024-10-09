@@ -1,8 +1,9 @@
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
-import dbConnect from "@/lib/dbConnect";
-import UserModel from "@/models/User";
+import { connectToAuthDB } from "@/lib/db/authDb";
+import { getUserModel } from "@/models/User";
+import { getAcceptMessageModel } from "@/models/AcceptMessage";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -11,15 +12,18 @@ export const authOptions: NextAuthOptions = {
       name: "Credentials",
       credentials: {
         email: {
-          label: "Username",
+          label: "Email",
           type: "text",
           placeholder: "Enter email ...",
         },
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials: any): Promise<any> {
-        await dbConnect();
+        await connectToAuthDB();
         try {
+          const UserModel = await getUserModel();
+          const AcceptMessageModel = await getAcceptMessageModel();
+
           const user = await UserModel.findOne({
             $or: [
               { email: credentials.identifier },
@@ -31,7 +35,7 @@ export const authOptions: NextAuthOptions = {
             throw new Error("No user found with this email");
           }
 
-          if (!user.isVerified) {
+          if (!user.isEmailVerified) {
             throw new Error("Please verify your account before login");
           }
 
@@ -40,11 +44,22 @@ export const authOptions: NextAuthOptions = {
             user.password
           );
 
-          if (isPasswordCorrect) {
-            return user;
-          } else {
+          if (!isPasswordCorrect) {
             throw new Error("Incorrect Password");
           }
+
+          const isAcceptMessageModelExists = await AcceptMessageModel.findOne({
+            userId: user._id,
+          });
+
+          if (!isAcceptMessageModelExists) {
+            await AcceptMessageModel.create({
+              userId: user._id,
+              isAcceptingMessages: true,
+            });
+          }
+
+          return user;
         } catch (error: any) {
           throw new Error(error);
         }
