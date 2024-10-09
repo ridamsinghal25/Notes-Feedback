@@ -1,3 +1,4 @@
+import { getAppDBConnection } from "@/lib/db/appDB";
 import mongoose, { Document, Schema } from "mongoose";
 
 export interface AcceptMessage extends Document {
@@ -17,8 +18,14 @@ const AcceptMessageSchema: Schema<AcceptMessage> = new Schema({
   },
 });
 
-const AcceptMessageModel =
-  (mongoose.models.AcceptMessage as mongoose.Model<AcceptMessage>) ||
-  mongoose.model<AcceptMessage>("AcceptMessage", AcceptMessageSchema);
+async function getAcceptMessageModel(): Promise<mongoose.Model<AcceptMessage>> {
+  const connection = await getAppDBConnection();
 
-export default AcceptMessageModel;
+  const AcceptMessageModel =
+    (connection.models.AcceptMessage as mongoose.Model<AcceptMessage>) ||
+    connection.model<AcceptMessage>("AcceptMessage", AcceptMessageSchema);
+
+  return AcceptMessageModel;
+}
+
+export { getAcceptMessageModel };

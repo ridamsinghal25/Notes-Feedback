@@ -1,4 +1,5 @@
 import { AvailableUserRoles, UserRolesEnum } from "@/constants";
+import { getAuthDBConnection } from "@/lib/db/authDb";
 import mongoose, { Schema, Document } from "mongoose";
 
 export interface User extends Document {
@@ -89,8 +90,14 @@ const UserSchema: Schema<User> = new Schema(
   { timestamps: true }
 );
 
-const UserModel =
-  (mongoose.models.User as mongoose.Model<User>) ||
-  mongoose.model<User>("User", UserSchema);
+async function getUserModel(): Promise<mongoose.Model<User>> {
+  const connection = await getAuthDBConnection();
 
-export default UserModel;
+  const UserModel =
+    (connection.models.User as mongoose.Model<User>) ||
+    connection.model<User>("User", UserSchema);
+
+  return UserModel;
+}
+
+export { getUserModel };

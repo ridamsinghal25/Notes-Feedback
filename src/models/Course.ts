@@ -1,3 +1,4 @@
+import { getAuthDBConnection } from "@/lib/db/authDb";
 import mongoose, { Document, Schema } from "mongoose";
 
 export interface Course extends Document {
@@ -32,8 +33,13 @@ const CourseSchema: Schema<Course> = new Schema({
   },
 });
 
-const CourseModel =
-  (mongoose.models.Course as mongoose.Model<Course>) ||
-  mongoose.model<Course>("Course", CourseSchema);
+async function getCourseModel(): Promise<mongoose.Model<Course>> {
+  const connection = await getAuthDBConnection();
 
-export default CourseModel;
+  const CourseModel =
+    (connection.models.Course as mongoose.Model<Course>) ||
+    connection.model<Course>("Course", CourseSchema);
+
+  return CourseModel;
+}
+export { getCourseModel };
