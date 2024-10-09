@@ -1,4 +1,5 @@
-export const DB_NAME = "truefeedback";
+export const APP_DB = "truefeedback";
+export const AUTH_DB = "auth-db";
 
 export const UserRolesEnum = {
   ADMIN: "ADMIN",
