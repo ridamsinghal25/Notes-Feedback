@@ -1,8 +1,9 @@
+import { getAppDBConnection } from "@/lib/db/appDB";
 import mongoose, { Document, Schema } from "mongoose";
 
 export interface Message extends Document {
   subject: string;
-  chapterNumber: number;
+  chapterNumber: string;
   feedback: string;
   userId: Schema.Types.ObjectId;
 }
@@ -13,7 +14,7 @@ const MessageSchema: Schema<Message> = new Schema({
     required: [true, "subject is required"],
   },
   chapterNumber: {
-    type: Number,
+    type: String,
     required: [true, "chapter number is required"],
   },
   feedback: {
@@ -27,8 +28,14 @@ const MessageSchema: Schema<Message> = new Schema({
   },
 });
 
-const MessageModel =
-  (mongoose.models.Message as mongoose.Model<Message>) ||
-  mongoose.model<Message>("Message", MessageSchema);
+async function getMessageModel(): Promise<mongoose.Model<Message>> {
+  const connection = await getAppDBConnection();
 
-export default MessageModel;
+  const MessageModel =
+    (connection.models.Message as mongoose.Model<Message>) ||
+    connection.model<Message>("Message", MessageSchema);
+
+  return MessageModel;
+}
+
+export { getMessageModel };
