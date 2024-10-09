@@ -1,11 +1,13 @@
-import dbConnect from "@/lib/dbConnect";
-import MessageModel from "@/models/Message";
+import { connectToAppDB } from "@/lib/db/appDB";
+import { getMessageModel } from "@/models/Message";
 import { getServerSession, User } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
-import AcceptMessageModel from "@/models/AcceptMessage";
+import { getAcceptMessageModel } from "@/models/AcceptMessage";
 
 export async function POST(request: Request) {
-  await dbConnect();
+  await connectToAppDB();
+  const MessageModel = await getMessageModel();
+  const AcceptMessageModel = await getAcceptMessageModel();
 
   const session = await getServerSession(authOptions);
   const user = session?.user as User;

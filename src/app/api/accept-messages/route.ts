@@ -1,11 +1,12 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
-import dbConnect from "@/lib/dbConnect";
+import { connectToAppDB } from "@/lib/db/appDB";
 import { User } from "next-auth";
-import AcceptMessageModel from "@/models/AcceptMessage";
+import { getAcceptMessageModel } from "@/models/AcceptMessage";
 
 export async function POST(request: Request) {
-  await dbConnect();
+  await connectToAppDB();
+  const AcceptMessageModel = await getAcceptMessageModel();
 
   const session = await getServerSession(authOptions);
   const user = session?.user as User;
@@ -60,7 +61,8 @@ export async function POST(request: Request) {
 }
 
 export async function GET(request: Request) {
-  await dbConnect();
+  await connectToAppDB();
+  const AcceptMessageModel = await getAcceptMessageModel();
 
   const session = await getServerSession(authOptions);
   const user = session?.user as User;
