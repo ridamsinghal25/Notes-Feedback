@@ -23,7 +23,7 @@ import { ModeToggle } from "@/components/ModeToggle";
 
 function PublicProfile() {
   const params = useParams();
-  const username = params.username;
+  const fullName = params.fullName;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
 
@@ -41,7 +41,7 @@ function PublicProfile() {
 
     try {
       const response = await axios.post("/api/send-message", {
-        username,
+        fullName,
         ...data,
       });
 
@@ -76,7 +76,7 @@ function PublicProfile() {
         </h1>
         <div className="mb-4">
           <h2 className="text-lg font-semibold mb-2 dark:text-gray-400">
-            Send Anonymous Messages to @{username}
+            Send Anonymous Messages to @{fullName}
           </h2>{" "}
           <Form {...form}>
             <form
