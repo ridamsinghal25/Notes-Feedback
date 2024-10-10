@@ -22,19 +22,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    const { subject } = await request.json();
-
-    if (!subject) {
-      return Response.json(
-        {
-          success: false,
-          message: "Subject is required",
-        },
-        { status: 400 }
-      );
-    }
-
-    const getMessages = await MessageModel.find({ subject });
+    const getMessages = await MessageModel.find();
 
     if (getMessages?.length === 0) {
       return Response.json(
