@@ -19,7 +19,7 @@ import { useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { ApiResponse } from "@/types/ApiResponse";
 import { useParams } from "next/navigation";
-import { ModeToggle } from "@/components/ModeToggle";
+import withProtectedRoute from "@/components/WithProtectedRoutes";
 
 function PublicProfile() {
   const params = useParams();
@@ -28,7 +28,7 @@ function PublicProfile() {
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof messageSchema>>({
-    resolver: zodResolver(messageSchema),
+    // resolver: zodResolver(messageSchema),
     defaultValues: {
       content: "",
     },
@@ -65,11 +65,6 @@ function PublicProfile() {
 
   return (
     <>
-      <nav className="p-4 md:p-6 shadow-md dark:shadow-gray-600 text-white">
-        <div className="container mx-auto flex flex-col md:flex-row items-center justify-end">
-          <ModeToggle />
-        </div>
-      </nav>
       <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl  dark:bg-black">
         <h1 className="text-4xl text-center font-bold mb-4 dark:text-gray-300">
           Public Profile Link
@@ -123,4 +118,4 @@ function PublicProfile() {
   );
 }
 
-export default PublicProfile;
+export default withProtectedRoute(PublicProfile);
