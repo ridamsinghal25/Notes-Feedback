@@ -37,11 +37,15 @@ function SignIn() {
   });
 
   const onSubmit = async (data: z.infer<typeof signInSchema>) => {
+    setIsSubmitting(true);
+
     const result = await signIn("credentials", {
       redirect: false,
       identifier: data.identifier,
       password: data.password,
     });
+
+    setIsSubmitting(false);
 
     if (result?.error) {
       toast({
