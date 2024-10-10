@@ -6,7 +6,7 @@ import * as z from "zod";
 import Link from "next/link";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Form,
   FormControl,
@@ -23,6 +23,7 @@ import { signIn } from "next-auth/react";
 
 function SignIn() {
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const searchParams = useSearchParams();
 
   const { toast } = useToast();
   const router = useRouter();
@@ -35,6 +36,8 @@ function SignIn() {
       password: "",
     },
   });
+
+  const callbackUrl = searchParams.get("callbackUrl");
 
   const onSubmit = async (data: z.infer<typeof signInSchema>) => {
     setIsSubmitting(true);
@@ -56,6 +59,9 @@ function SignIn() {
     }
 
     if (result?.url) {
+      if (callbackUrl) {
+        router.replace(callbackUrl);
+      }
       router.replace("/dashboard");
     }
   };

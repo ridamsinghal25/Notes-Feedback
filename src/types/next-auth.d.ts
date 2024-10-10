@@ -7,12 +7,14 @@ declare module "next-auth" {
     isEmailVerified?: boolean;
     isAcceptingMessages?: boolean;
     fullName?: string;
+    role?: string;
   }
   interface Session {
     user: {
       _id?: string;
       isEmailVerified?: boolean;
       fullName?: string;
+      role?: string;
     } & DefaultSession["user"];
   }
 }
@@ -23,5 +25,6 @@ declare module "next-auth/jwt" {
     isEmailVerified?: boolean;
     isAcceptingMessages?: boolean;
     fullName?: string;
+    role?: string;
   }
 }
