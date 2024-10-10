@@ -55,7 +55,7 @@ function ApiLogic() {
       setIsSwitchLoading(true);
 
       try {
-        const response = await axios.post<ApiResponse>("/api/get-messages");
+        const response = await axios.get<ApiResponse>("/api/get-messages");
 
         setMessages(response.data.messages || []);
 

@@ -4,7 +4,7 @@ import { connectToAppDB } from "@/lib/db/appDB";
 import { User } from "next-auth";
 import { getMessageModel } from "@/models/Message";
 
-export async function POST(request: Request) {
+export async function GET(request: Request) {
   await connectToAppDB();
   const MessageModel = await getMessageModel();
 
