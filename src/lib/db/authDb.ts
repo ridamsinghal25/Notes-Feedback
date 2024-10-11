@@ -31,7 +31,8 @@ async function connectToAuthDB(): Promise<void> {
 }
 
 async function getAuthDBConnection(): Promise<mongoose.Connection> {
-  if (connection.authDB) {
+  if (connection.authDB && connection.isConnected) {
+    console.log("Already connected to auth db");
     return connection.authDB!;
   }
 

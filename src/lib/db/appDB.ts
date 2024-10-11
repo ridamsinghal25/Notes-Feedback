@@ -33,7 +33,8 @@ async function connectToAppDB(): Promise<void> {
 }
 
 async function getAppDBConnection(): Promise<mongoose.Connection> {
-  if (connection.appDB) {
+  if (connection.appDB && connection.isConnected) {
+    console.log("Already connected to app db");
     return connection.appDB!;
   }
 
