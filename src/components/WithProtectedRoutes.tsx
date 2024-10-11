@@ -5,9 +5,13 @@ import React, { useEffect } from "react";
 const withProtectedRoute = (WrappedComponent: React.ComponentType<any>) => {
   return (props: any) => {
     const router = useRouter();
-    const { data: session } = useSession();
+    const { data: session, status } = useSession();
 
     useEffect(() => {
+      if (status === "loading") {
+        return;
+      }
+
       if (!session) {
         router.push("/sign-in");
       }
