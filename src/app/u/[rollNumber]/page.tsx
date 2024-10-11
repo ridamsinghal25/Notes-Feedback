@@ -6,6 +6,7 @@ import {
   FormControl,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
@@ -15,47 +16,54 @@ import { Loader2 } from "lucide-react";
 import { messageSchema } from "@/schemas/messageSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
 import { ApiResponse } from "@/types/ApiResponse";
 import { useParams } from "next/navigation";
 import withProtectedRoute from "@/components/WithProtectedRoutes";
+import FormFieldInput from "@/components/FormFieldInput";
+import { decodeBase64 } from "@/helpers/encodeAndDecode";
 
 function PublicProfile() {
   const params = useParams();
-  const fullName = params.fullName;
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-
+  console.log(params);
   const form = useForm<z.infer<typeof messageSchema>>({
-    // resolver: zodResolver(messageSchema),
+    resolver: zodResolver(messageSchema),
     defaultValues: {
-      content: "",
+      subject: "",
+      chapterNumber: "",
+      feedback: "",
     },
   });
 
-  const messageContent = form.watch("content");
+  const ParamRollNumber = String(params.rollNumber);
+
+  const decodedRollNumber: string = decodeBase64(ParamRollNumber);
 
   const onSubmit = async (data: z.infer<typeof messageSchema>) => {
     setIsSubmitting(true);
 
     try {
       const response = await axios.post("/api/send-message", {
-        fullName,
+        notesCreatorRollNumber: decodedRollNumber,
         ...data,
       });
 
       toast({
         title: response?.data?.message,
       });
+
+      // form.reset();
     } catch (error) {
-      console.log("Error while sending message", error);
       const axiosError = error as AxiosError<ApiResponse>;
       const errorMessage = axiosError?.response?.data?.message;
 
       toast({
         title: "Request failed",
-        description: errorMessage,
+        description:
+          errorMessage || "Something went wrong while sending message",
         variant: "destructive",
       });
     } finally {
@@ -65,48 +73,61 @@ function PublicProfile() {
 
   return (
     <>
-      <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 bg-white rounded w-full max-w-6xl  dark:bg-black">
-        <h1 className="text-4xl text-center font-bold mb-4 dark:text-gray-300">
-          Public Profile Link
-        </h1>
-        <div className="mb-4">
-          <h2 className="text-lg font-semibold mb-2 dark:text-gray-400">
-            Send Anonymous Messages to @{fullName}
-          </h2>{" "}
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 dark:bg-gray-900 transition-colors duration-300">
+        <div className="w-full max-w-2xl p-6 bg-white dark:bg-gray-800 rounded-lg shadow-md">
+          <div className="flex justify-between items-center mb-6">
+            <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+              Feedback Form
+            </h1>
+          </div>
+
           <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(onSubmit)}
-              className="w-full space-y-6 "
-            >
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+              <FormFieldInput
+                form={form}
+                label="Subject"
+                name="subject"
+                placeholder="Enter subject"
+              />
+
+              <FormFieldInput
+                form={form}
+                label="Chapter Number"
+                name="chapterNumber"
+                placeholder="Enter chapter number"
+              />
+
               <FormField
                 control={form.control}
-                name="content"
-                render={({ field }) => (
+                name="feedback"
+                render={({ field, fieldState }) => (
                   <FormItem>
+                    <FormLabel
+                      className={fieldState.error && "dark:text-red-500"}
+                    >
+                      Feedback
+                    </FormLabel>
                     <FormControl>
                       <Textarea
-                        placeholder="Write your anonymous message here"
-                        className="resize-none dark:text-gray-300 dark:border-gray-500 dark:border-2"
+                        placeholder="Write your feedback here"
                         {...field}
+                        className="resize-none h-32 "
                       />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage className="text-red-500" />
                   </FormItem>
                 )}
               />
+
               <div className="flex justify-center">
-                <Button
-                  type="submit"
-                  disabled={isSubmitting || !messageContent}
-                  variant={"dark"}
-                >
+                <Button variant="dark" type="submit" disabled={isSubmitting}>
                   {isSubmitting ? (
                     <>
                       <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      Please wait
+                      Submitting...
                     </>
                   ) : (
-                    "Send it"
+                    "Submit Feedback"
                   )}
                 </Button>
               </div>
