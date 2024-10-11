@@ -3,11 +3,13 @@ import { getMessageModel } from "@/models/Message";
 import { getServerSession, User } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/options";
 import { getAcceptMessageModel } from "@/models/AcceptMessage";
+import { getUserModel } from "@/models/User";
 
 export async function POST(request: Request) {
   await connectToAppDB();
   const MessageModel = await getMessageModel();
   const AcceptMessageModel = await getAcceptMessageModel();
+  const UserModel = await getUserModel();
 
   const session = await getServerSession(authOptions);
   const user = session?.user as User;
@@ -25,10 +27,11 @@ export async function POST(request: Request) {
   const userId = user?._id;
 
   try {
-    const { subject, chapterNumber, feedback } = await request.json();
+    const { subject, chapterNumber, feedback, notesCreatorRollNumber } =
+      await request.json();
 
     if (
-      [subject, chapterNumber, feedback].some(
+      [subject, chapterNumber, feedback, notesCreatorRollNumber].some(
         (field) => field?.trim() === "" || !field
       )
     ) {
@@ -41,8 +44,22 @@ export async function POST(request: Request) {
       );
     }
 
+    const isCreatorExists = await UserModel.findOne({
+      rollNumber: notesCreatorRollNumber,
+    });
+
+    if (!isCreatorExists) {
+      return Response.json(
+        {
+          success: false,
+          message: "The user does not exist to whom you are sending message",
+        },
+        { status: 404 }
+      );
+    }
+
     const isUserAcceptingMessages = await AcceptMessageModel.findOne({
-      userId,
+      userId: isCreatorExists._id,
     });
 
     if (!isUserAcceptingMessages?.isAcceptingMessages) {
@@ -60,6 +77,7 @@ export async function POST(request: Request) {
       chapterNumber,
       feedback,
       userId,
+      creatorId: isUserAcceptingMessages?.userId,
     });
 
     if (!createNewMessage) {

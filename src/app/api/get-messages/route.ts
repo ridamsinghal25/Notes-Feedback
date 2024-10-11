@@ -22,7 +22,9 @@ export async function GET(request: Request) {
   }
 
   try {
-    const getMessages = await MessageModel.find();
+    const getMessages = await MessageModel.find({
+      notesCreatorId: user._id,
+    });
 
     if (getMessages?.length === 0) {
       return Response.json(

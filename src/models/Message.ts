@@ -6,6 +6,8 @@ export interface Message extends Document {
   chapterNumber: string;
   feedback: string;
   userId: Schema.Types.ObjectId;
+  notesCreatorId: Schema.Types.ObjectId;
+  createdAt: Date;
 }
 
 const MessageSchema: Schema<Message> = new Schema({
@@ -25,6 +27,16 @@ const MessageSchema: Schema<Message> = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
     required: [true, "user id is required"],
+  },
+  notesCreatorId: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    required: [true, "user id is required"],
+  },
+  createdAt: {
+    type: Date,
+    required: true,
+    default: Date.now(),
   },
 });
 
