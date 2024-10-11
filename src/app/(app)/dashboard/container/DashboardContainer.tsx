@@ -5,6 +5,7 @@ import { User } from "next-auth";
 import { useSession } from "next-auth/react";
 import Dashboard from "../presentation/Dashboard";
 import ApiLogic from "./ApiLogic";
+import { encodeBase64 } from "@/helpers/encodeAndDecode";
 
 function DashboardContainer() {
   const { toast } = useToast();
@@ -24,12 +25,14 @@ function DashboardContainer() {
     return null;
   }
 
-  const { fullName } = session?.user as User;
+  const { rollNumber } = session?.user as User;
+
+  const encodedRollNumber = encodeBase64(rollNumber!);
 
   // TODO: reserach it
   const baseUrl = `${window.location.protocol}//${window.location.host}`;
 
-  const profileUrl = `${baseUrl}/u/${fullName}`;
+  const profileUrl = `${baseUrl}/u/${encodedRollNumber}`;
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(profileUrl);
