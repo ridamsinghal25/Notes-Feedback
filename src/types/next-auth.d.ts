@@ -6,6 +6,7 @@ declare module "next-auth" {
     _id?: string;
     isEmailVerified?: boolean;
     isAcceptingMessages?: boolean;
+    rollNumber?: string;
     fullName?: string;
     role?: string;
   }
@@ -13,6 +14,7 @@ declare module "next-auth" {
     user: {
       _id?: string;
       isEmailVerified?: boolean;
+      rollNumber?: string;
       fullName?: string;
       role?: string;
     } & DefaultSession["user"];
@@ -24,6 +26,7 @@ declare module "next-auth/jwt" {
     _id?: string;
     isEmailVerified?: boolean;
     isAcceptingMessages?: boolean;
+    rollNumber?: string;
     fullName?: string;
     role?: string;
   }

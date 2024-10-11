@@ -71,6 +71,7 @@ export const authOptions: NextAuthOptions = {
       if (user) {
         token._id = user._id?.toString();
         token.isEmailVerified = user.isEmailVerified;
+        token.rollNumber = user.rollNumber;
         token.fullName = user.fullName;
         token.role = user.role;
       }
@@ -81,6 +82,7 @@ export const authOptions: NextAuthOptions = {
       if (token) {
         session.user._id = token._id;
         session.user.isEmailVerified = token.isEmailVerified;
+        session.user.rollNumber = token.rollNumber;
         session.user.fullName = token.fullName;
         session.user.role = token.role;
       }
