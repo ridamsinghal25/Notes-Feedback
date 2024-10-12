@@ -52,9 +52,9 @@ function Dashboard({
   }
 
   return (
-    <div className="my-8 mx-4 md:mx-8 lg:mx-auto p-6 dark:bg-black bg-white rounded w-full max-w-6xl">
-      <h1 className="text-4xl font-bold mb-4 dark:text-gray-300">
-        User Dashboard
+    <div className="my-8 sm:mx-4 md:mx-2 lg:mx-auto p-6 pl-6 dark:bg-black bg-white rounded w-full max-w-6xl">
+      <h1 className="text-2xl md:text-4xl font-bold mb-4 dark:text-gray-300">
+        Welcome {session.user?.fullName}, your Dashboard
       </h1>
 
       <div className="mb-4">
@@ -101,7 +101,7 @@ function Dashboard({
           <RefreshCcw className="h-4 w-4" />
         )}
       </Button>
-      <div className="mt-4 grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div className="mt-4 grid grid-cols-1 lg:grid-cols-2 gap-6">
         {messages.length > 0 ? (
           messages.map((message) => (
             <MessageCard

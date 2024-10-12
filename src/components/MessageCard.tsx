@@ -3,7 +3,9 @@
 import React from "react";
 import {
   Card,
+  CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
@@ -19,8 +21,8 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "./ui/button";
-import { X } from "lucide-react";
-import { Message } from "@/models/User";
+import { CircleDivideIcon, X } from "lucide-react";
+import { Message } from "@/models/Message";
 import { useToast } from "./ui/use-toast";
 import axios, { AxiosError } from "axios";
 import { ApiResponse } from "@/types/ApiResponse";
@@ -63,9 +65,9 @@ function MessageCard({ message, onMessageDelete }: MessageCardProps) {
   return (
     <Card className="dark:border-slate-400 dark:border-2">
       <CardHeader>
-        <div className="w-full flex flex-row justify-between items-center">
-          <CardTitle className="text-lg dark:text-slate-400">
-            {message?.content}
+        <div className="w-full flex flex-row justify-between items-center gap-5">
+          <CardTitle className="text-lg md:text-xl dark:text-slate-400 break-all">
+            {message?.feedback}
           </CardTitle>
           <AlertDialog>
             <AlertDialogTrigger asChild>
@@ -93,10 +95,43 @@ function MessageCard({ message, onMessageDelete }: MessageCardProps) {
             </AlertDialogContent>
           </AlertDialog>
         </div>
-        <CardDescription className="text-blue-950 dark:text-slate-500">
-          {formattedDate}, {formattedTime}
-        </CardDescription>
       </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-2 gap-4">
+          <div>
+            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+              Subject
+            </h3>
+            <p className="mt-1 text-sm text-gray-900 dark:text-gray-200">
+              {message?.subject || "N/A"}
+            </p>
+          </div>
+          <div>
+            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+              Chapter Number
+            </h3>
+            <p className="mt-1 text-sm text-gray-900 dark:text-gray-200">
+              {message?.chapterNumber || "N/A"}
+            </p>
+          </div>
+          <div>
+            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+              Full Name
+            </h3>
+            <p className="mt-1 text-sm text-gray-900 dark:text-gray-200">
+              {message?.userInfo?.fullName || "N/A"}
+            </p>
+          </div>
+          <div>
+            <h3 className="text-sm font-medium text-gray-500 dark:text-gray-400">
+              Date
+            </h3>
+            <p className="mt-1 text-sm text-gray-900 dark:text-gray-200 break-all">
+              {formattedDate}, {formattedTime}
+            </p>
+          </div>
+        </div>
+      </CardContent>
     </Card>
   );
 }
