@@ -4,6 +4,7 @@ import bcrypt from "bcryptjs";
 import { connectToAuthDB } from "@/lib/db/authDb";
 import { getUserModel } from "@/models/User";
 import { getAcceptMessageModel } from "@/models/AcceptMessage";
+import { UserRolesEnum } from "@/constants";
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -52,7 +53,10 @@ export const authOptions: NextAuthOptions = {
             userId: user._id,
           });
 
-          if (!isAcceptMessageModelExists) {
+          if (
+            !isAcceptMessageModelExists &&
+            user.role === UserRolesEnum.ADMIN
+          ) {
             await AcceptMessageModel.create({
               userId: user._id,
               isAcceptingMessages: true,

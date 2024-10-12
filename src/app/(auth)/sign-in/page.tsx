@@ -3,7 +3,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import * as z from "zod";
-import Link from "next/link";
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -61,7 +60,9 @@ function SignIn() {
     if (result?.url) {
       if (callbackUrl) {
         router.replace(callbackUrl);
+        return;
       }
+
       router.replace("/dashboard");
     }
   };
@@ -118,14 +119,6 @@ function SignIn() {
             </Button>
           </form>
         </Form>
-        <div className="text-center mt-4">
-          <p>
-            Already a member?{" "}
-            <Link href="/sign-up" className="text-blue-600 hover:text-blue-800">
-              Sign up
-            </Link>
-          </p>
-        </div>
       </div>
     </div>
   );

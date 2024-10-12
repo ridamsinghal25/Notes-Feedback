@@ -28,7 +28,7 @@ function PublicProfile() {
   const params = useParams();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const { toast } = useToast();
-  console.log(params);
+
   const form = useForm<z.infer<typeof messageSchema>>({
     resolver: zodResolver(messageSchema),
     defaultValues: {
@@ -55,7 +55,7 @@ function PublicProfile() {
         title: response?.data?.message,
       });
 
-      // form.reset();
+      form.reset();
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
       const errorMessage = axiosError?.response?.data?.message;
