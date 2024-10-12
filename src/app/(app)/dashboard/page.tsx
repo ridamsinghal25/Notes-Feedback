@@ -1,6 +1,5 @@
 "use client";
 
-import withProtectedRoute from "@/components/WithProtectedRoutes";
 import DashboardContainer from "./container/DashboardContainer";
 import { useSession } from "next-auth/react";
 import { useRouter } from "next/navigation";
@@ -20,4 +19,4 @@ function UserDashboard() {
   return <DashboardContainer />;
 }
 
-export default withProtectedRoute(UserDashboard);
+export default UserDashboard;
