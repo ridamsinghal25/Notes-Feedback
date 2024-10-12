@@ -10,25 +10,19 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { useForm } from "react-hook-form";
-import { useToast } from "@/components/ui/use-toast";
-import axios, { AxiosError } from "axios";
 import { Loader2 } from "lucide-react";
 import { messageSchema } from "@/schemas/messageSchema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { useEffect, useState } from "react";
 import { Textarea } from "@/components/ui/textarea";
-import { ApiResponse } from "@/types/ApiResponse";
-import { useParams } from "next/navigation";
-import withProtectedRoute from "@/components/WithProtectedRoutes";
 import FormFieldInput from "@/components/FormFieldInput";
-import { decodeBase64 } from "@/helpers/encodeAndDecode";
 
-function PublicProfile() {
-  const params = useParams();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const { toast } = useToast();
+type FeedbackFormProps = {
+  isSubmitting: boolean;
+  onSubmit: (data: z.infer<typeof messageSchema>) => void;
+};
 
+function FeedbackForm({ isSubmitting, onSubmit }: FeedbackFormProps) {
   const form = useForm<z.infer<typeof messageSchema>>({
     resolver: zodResolver(messageSchema),
     defaultValues: {
@@ -37,39 +31,6 @@ function PublicProfile() {
       feedback: "",
     },
   });
-
-  const ParamRollNumber = String(params.rollNumber);
-
-  const decodedRollNumber: string = decodeBase64(ParamRollNumber);
-
-  const onSubmit = async (data: z.infer<typeof messageSchema>) => {
-    setIsSubmitting(true);
-
-    try {
-      const response = await axios.post("/api/send-message", {
-        notesCreatorRollNumber: decodedRollNumber,
-        ...data,
-      });
-
-      toast({
-        title: response?.data?.message,
-      });
-
-      form.reset();
-    } catch (error) {
-      const axiosError = error as AxiosError<ApiResponse>;
-      const errorMessage = axiosError?.response?.data?.message;
-
-      toast({
-        title: "Request failed",
-        description:
-          errorMessage || "Something went wrong while sending message",
-        variant: "destructive",
-      });
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
 
   return (
     <>
@@ -139,4 +100,4 @@ function PublicProfile() {
   );
 }
 
-export default withProtectedRoute(PublicProfile);
+export default FeedbackForm;

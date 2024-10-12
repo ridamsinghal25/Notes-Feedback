@@ -26,10 +26,10 @@ export async function middleware(request: NextRequest) {
   if (
     !token &&
     (url.pathname.startsWith("/dashboard") ||
-      url.pathname.startsWith("/u/") ||
+      url.pathname.startsWith("/feedback/") ||
       url.pathname.startsWith("/access-denied"))
   ) {
-    if (url.pathname.startsWith("/u/")) {
+    if (url.pathname.startsWith("/feedback/")) {
       return NextResponse.redirect(
         new URL(`/sign-in?callbackUrl=${url.pathname}`, request.url)
       );
@@ -45,7 +45,7 @@ export const config = {
     "/dashboard/:path*",
     "/sign-in",
     "/",
-    "/u/:path*",
+    "/feedback/:path*",
     "/access-denied",
   ],
 };

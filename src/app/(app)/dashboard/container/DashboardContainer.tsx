@@ -32,7 +32,7 @@ function DashboardContainer() {
   // TODO: reserach it
   const baseUrl = `${window.location.protocol}//${window.location.host}`;
 
-  const profileUrl = `${baseUrl}/u/${encodedRollNumber}`;
+  const profileUrl = `${baseUrl}/feedback/${encodedRollNumber}`;
 
   const copyToClipboard = () => {
     navigator.clipboard.writeText(profileUrl);
