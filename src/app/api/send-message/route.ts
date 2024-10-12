@@ -77,7 +77,7 @@ export async function POST(request: Request) {
       chapterNumber,
       feedback,
       userId,
-      creatorId: isUserAcceptingMessages?.userId,
+      notesCreatorId: isUserAcceptingMessages?.userId,
     });
 
     if (!createNewMessage) {

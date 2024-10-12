@@ -1,5 +1,6 @@
 import { getAppDBConnection } from "@/lib/db/appDB";
 import mongoose, { Document, Schema } from "mongoose";
+import { User } from "./User";
 
 export interface Message extends Document {
   subject: string;
@@ -8,6 +9,7 @@ export interface Message extends Document {
   userId: Schema.Types.ObjectId;
   notesCreatorId: Schema.Types.ObjectId;
   createdAt: Date;
+  userInfo?: User;
 }
 
 const MessageSchema: Schema<Message> = new Schema({
@@ -27,6 +29,7 @@ const MessageSchema: Schema<Message> = new Schema({
     type: Schema.Types.ObjectId,
     ref: "User",
     required: [true, "user id is required"],
+    index: true,
   },
   notesCreatorId: {
     type: Schema.Types.ObjectId,
