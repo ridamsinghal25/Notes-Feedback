@@ -1,9 +1,16 @@
 "use client";
 
-import SignInContainer from "./container/SignInContainer";
+import SignInSkeleton from "@/components/SignInSkeleton";
+import SignInWrapper from "./container/SignInContainer";
 
 function SignIn() {
-  return <SignInContainer />;
+  // return <SignInWrapper />;
+  return (
+    <>
+      <SignInSkeleton />
+      <SignInWrapper />
+    </>
+  );
 }
 
 export default SignIn;

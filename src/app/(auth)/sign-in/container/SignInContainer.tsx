@@ -1,12 +1,13 @@
 "use client";
 
 import * as z from "zod";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { useRouter, useSearchParams } from "next/navigation";
 import { signInSchema } from "@/schemas/signInSchema";
 import { signIn } from "next-auth/react";
 import SignIn from "../presentation/SignIn";
+import SignInSkeleton from "@/components/SignInSkeleton";
 
 function SignInContainer() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -49,4 +50,10 @@ function SignInContainer() {
   return <SignIn isSubmitting={isSubmitting} onSubmit={onSubmit} />;
 }
 
-export default SignInContainer;
+export default function SignInWrapper() {
+  return (
+    <Suspense fallback={<SignInSkeleton />}>
+      <SignInContainer />
+    </Suspense>
+  );
+}
