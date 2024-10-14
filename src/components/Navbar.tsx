@@ -17,7 +17,7 @@ function Navbar() {
             href="#"
             className="text-xl font-bold mb-4 md:mb-0 dark:text-slate-200"
           >
-            True Feedback
+            Notes Feedback
           </a>
         </div>
         <div className="flex gap-2">
