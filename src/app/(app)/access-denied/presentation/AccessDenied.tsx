@@ -3,7 +3,7 @@ import { AlertTriangle } from "lucide-react";
 function AccessDenied() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-blue-100 to-purple-100">
-      <div className="max-w-md w-full space-y-8 p-10 bg-white shadow-xl rounded-xl">
+      <div className="max-w-xs sm:max-w-md w-full space-y-8 p-10 bg-white shadow-xl rounded-xl">
         <div className="text-center">
           <AlertTriangle className="mx-auto h-12 w-12 text-yellow-400" />
           <h2 className="mt-6 text-3xl font-extrabold text-gray-900">
