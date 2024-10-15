@@ -11,7 +11,7 @@ function UserDashboard() {
   const router = useRouter();
 
   useEffect(() => {
-    if (session?.user?.role !== UserRolesEnum.ADMIN) {
+    if (session && session?.user?.role !== UserRolesEnum.ADMIN) {
       router.replace("/access-denied");
     }
   }, [session, router]);
