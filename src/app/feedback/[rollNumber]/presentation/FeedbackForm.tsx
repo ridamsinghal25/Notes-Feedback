@@ -9,6 +9,13 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { useForm } from "react-hook-form";
 import { Loader2 } from "lucide-react";
 import { messageSchema } from "@/schemas/messageSchema";
@@ -16,7 +23,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Textarea } from "@/components/ui/textarea";
 import FormFieldInput from "@/components/FormFieldInput";
-import FormFieldSelect from "@/components/FormFieldSelect";
 
 type FeedbackFormProps = {
   isSubmitting: boolean;
@@ -57,14 +63,37 @@ function FeedbackForm({
               )}
               className="space-y-6"
             >
-              <FormFieldSelect
-                form={form}
-                label="Subject"
+              <FormField
+                control={form.control}
                 name="subject"
-                placeholder="Enter subject"
-                values={subjects}
-                disabled={isLoading}
-                className={isLoading ? "pr-10" : ""}
+                render={({ field, fieldState }) => (
+                  <FormItem>
+                    <FormLabel
+                      className={fieldState.error && "dark:text-red-500"}
+                    >
+                      Subjects
+                    </FormLabel>
+                    <Select
+                      {...field}
+                      onValueChange={field.onChange}
+                      disabled={isLoading}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Enter Subject" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {subjects?.map((subject) => (
+                          <SelectItem key={subject} value={subject}>
+                            {subject}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage
+                      className={fieldState.error && "dark:text-red-500"}
+                    />
+                  </FormItem>
+                )}
               />
               {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
 
