@@ -16,13 +16,21 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import { Textarea } from "@/components/ui/textarea";
 import FormFieldInput from "@/components/FormFieldInput";
+import FormFieldSelect from "@/components/FormFieldSelect";
 
 type FeedbackFormProps = {
   isSubmitting: boolean;
-  onSubmit: (data: z.infer<typeof messageSchema>) => void;
+  onSubmit: (data: z.infer<typeof messageSchema>) => Promise<void>;
+  subjects: string[];
+  isLoading: boolean;
 };
 
-function FeedbackForm({ isSubmitting, onSubmit }: FeedbackFormProps) {
+function FeedbackForm({
+  isSubmitting,
+  onSubmit,
+  subjects,
+  isLoading,
+}: FeedbackFormProps) {
   const form = useForm<z.infer<typeof messageSchema>>({
     resolver: zodResolver(messageSchema),
     defaultValues: {
@@ -43,13 +51,22 @@ function FeedbackForm({ isSubmitting, onSubmit }: FeedbackFormProps) {
           </div>
 
           <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormFieldInput
+            <form
+              onSubmit={form.handleSubmit((data) =>
+                onSubmit(data).then(() => form.reset())
+              )}
+              className="space-y-6"
+            >
+              <FormFieldSelect
                 form={form}
                 label="Subject"
                 name="subject"
                 placeholder="Enter subject"
+                values={subjects}
+                disabled={isLoading}
+                className={isLoading ? "pr-10" : ""}
               />
+              {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
 
               <FormFieldInput
                 form={form}
