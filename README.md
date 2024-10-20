@@ -16,6 +16,30 @@ to foster an ecosystem of continuous improvement.
 - **MongoDB (or equivalent)**: A flexible database solution to store feedback data, user information, and uploaded notes.
 - **Tailwind CSS (optional)**: For a responsive and modern UI design.
 
+## Getting Started
+
+First, run the development server:
+
+npm run dev
+
+or
+
+yarn dev
+
+or
+
+pnpm dev
+
+or
+
+bun dev
+
+Open http://localhost:3000 with your browser to see the result.
+
+You can start editing the page by modifying app/page.tsx. The page auto-updates as you edit the file.
+
+This project uses next/font to automatically optimize and load Inter, a custom Google Font.
+
 ## Key Features and Functionality
 
 ### 1. **Admin-Only Feedback Reception**
@@ -54,26 +78,8 @@ to foster an ecosystem of continuous improvement.
 - Built with **Next.js**, the platform is optimized for high performance and smooth user experience.
 - The architecture is scalable, supporting a growing user base without compromising on responsiveness or functionality.
 
-## Getting Started
+## License
 
-First, run the development server:
+This project is licensed under the MIT License.
 
-npm run dev
-
-or
-
-yarn dev
-
-or
-
-pnpm dev
-
-or
-
-bun dev
-
-Open http://localhost:3000 with your browser to see the result.
-
-You can start editing the page by modifying app/page.tsx. The page auto-updates as you edit the file.
-
-This project uses next/font to automatically optimize and load Inter, a custom Google Font.
+For more information, please contact the project maintainers.
