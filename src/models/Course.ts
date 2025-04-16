@@ -1,15 +1,37 @@
 import { getAuthDBConnection } from "@/lib/db/authDb";
-import mongoose, { Document, Schema } from "mongoose";
+import mongoose, { Document, Schema, Types } from "mongoose";
 
+// Interface for Subject
+export interface Subject {
+  subjectName: string;
+  chapters: string[];
+}
+
+// Interface for Course
 export interface Course extends Document {
   courseName: string;
   semester: string;
-  subjects: string[];
+  subjects: Subject[];
+  createdBy: Types.ObjectId;
   startDate: Date;
   endDate: Date;
 }
 
-const CourseSchema: Schema<Course> = new Schema({
+// Subject Schema
+const subjectSchema = new Schema<Subject>({
+  subjectName: {
+    type: String,
+    required: [true, "Subject name is required"],
+    trim: true,
+  },
+  chapters: {
+    type: [String],
+    required: [true, "Subject chapters are required"],
+  },
+});
+
+// Course Schema
+const CourseSchema = new Schema<Course>({
   courseName: {
     type: String,
     required: [true, "Course name is required"],
@@ -20,8 +42,13 @@ const CourseSchema: Schema<Course> = new Schema({
     required: [true, "Course semester is required"],
   },
   subjects: {
-    type: [String],
-    required: [true, "course subjects are required"],
+    type: [subjectSchema],
+    required: true,
+  },
+  createdBy: {
+    type: Schema.Types.ObjectId,
+    ref: "User",
+    required: [true, "created by field is required"],
   },
   startDate: {
     type: Date,

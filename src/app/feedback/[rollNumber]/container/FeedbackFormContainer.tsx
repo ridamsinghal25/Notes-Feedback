@@ -23,7 +23,11 @@ function FeedbackFormContainer() {
       const response = await axios.get<ApiResponse>("/api/get-user-subjects");
 
       if (response?.data?.subjects) {
-        setSubjects(response?.data?.subjects!);
+        const subjects = response.data.subjects?.map(
+          (subject) => subject?.subjectName
+        );
+
+        setSubjects(subjects);
       }
     } catch (error) {
       const axiosError = error as AxiosError<ApiResponse>;
