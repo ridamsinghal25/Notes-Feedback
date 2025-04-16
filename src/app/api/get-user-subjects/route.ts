@@ -35,10 +35,12 @@ export async function GET() {
       );
     }
 
+    const subjects = userCourse.subjects?.map((subject) => subject.subjectName);
+
     return Response.json(
       {
         success: true,
-        subjects: userCourse.subjects,
+        subjects,
       },
       { status: 200 }
     );
